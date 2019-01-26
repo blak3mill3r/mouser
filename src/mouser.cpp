@@ -6,7 +6,7 @@ using namespace boost;
 using namespace boost::fibers;
 using namespace boost::this_fiber;
 
-Mouser::Mouser() : _d(XOpenDisplay(NULL)), _x_fd(ConnectionNumber(_d)), _keyboard_action_channel(1), _xtest_action_channel(10) {
+Mouser::Mouser() : _d(XOpenDisplay(NULL)), _x_fd(ConnectionNumber(_d)) {
   if (_d == NULL) {
     fprintf(stderr, "Cannot open display\n");
     exit(1);

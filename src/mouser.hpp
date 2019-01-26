@@ -29,9 +29,9 @@ struct CmdButton {
 typedef boost::variant< CmdMovement, CmdButton > Command;
 
 // Channel types
-typedef boost::fibers::unbounded_channel< XEvent > xevent_channel_t;
-typedef boost::fibers::bounded_channel< KeyboardAction > keyboard_action_channel_t;
-typedef boost::fibers::bounded_channel< Command > xtest_action_channel_t;
+typedef boost::fibers::unbuffered_channel< XEvent > xevent_channel_t;
+typedef boost::fibers::buffered_channel< KeyboardAction > keyboard_action_channel_t;
+typedef boost::fibers::buffered_channel< Command > xtest_action_channel_t;
 
 class Mouser
 {
@@ -47,8 +47,8 @@ public:
   void xtest_handler();
 
   xevent_channel_t _xevent_channel;
-  keyboard_action_channel_t _keyboard_action_channel;
-  xtest_action_channel_t _xtest_action_channel;
+  keyboard_action_channel_t _keyboard_action_channel{4};
+  xtest_action_channel_t _xtest_action_channel{8};
 
   void relative_move(int x, int y);
 
@@ -59,7 +59,7 @@ public:
 private:
   Display * _d;
   int _x_fd;
-  bool _running;
+  bool _running{true};
 
   float fx = 0.0f;
   float fy = 0.0f;
