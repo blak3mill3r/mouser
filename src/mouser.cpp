@@ -11,12 +11,15 @@ Mouser::Mouser() : _d(XOpenDisplay(NULL)), _x_fd(ConnectionNumber(_d)) {
     fprintf(stderr, "Cannot open display\n");
     exit(1);
   }
+  // TODO(Blake): test whether AutoRepeat is on in the first place; restore its value afterwards
   XAutoRepeatOff(_d);
   XGrabKeyboard(_d, DefaultRootWindow(_d), False, GrabModeAsync, GrabModeAsync, CurrentTime);
 }
 
 Mouser::~Mouser() {
   XUngrabKeyboard(_d, CurrentTime);
+  // TODO(Blake): test whether AutoRepeat is on in the first place; restore its value afterwards
+  XAutoRepeatOn(_d);
   XCloseDisplay(_d);
 }
 
