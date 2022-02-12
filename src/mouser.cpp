@@ -48,8 +48,10 @@ void Mouser::run() {
         XNextEvent(_d, &ev);
         _xevent_channel.push(ev);
       }
-    else
-      printf("An error occured!\n");
+    else {
+      printf("Fatal: select() returned %d\n", num_ready_fds);
+      exit(1);
+    }
   }
 }
 
