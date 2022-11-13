@@ -68,18 +68,14 @@ void Mouser::xevent_handler() {
       kc = ((XKeyPressedEvent*)&ev)->keycode;
       s = XKeysymToString(XKeycodeToKeysym(_d, kc, 0));
 
-      //if(s) printf("KEY: %s\n", s);
+      //if(s) printf("KEY: %s DOWN? %d\n", s, is_down);
+
       if(!strcmp(s, "q")) { stop(); break; }
 
       // probably cleaner to make KeyboardActions out of the button presses too...
       if(!strcmp(s, "f"))          _xtest_action_channel.push(CmdButton(1,   is_down));
       if(!strcmp(s, "d"))          _xtest_action_channel.push(CmdButton(2,   is_down));
       if(!strcmp(s, "s"))          _xtest_action_channel.push(CmdButton(3,   is_down));
-      if(!strcmp(s, "h"))          _keyboard_action_channel.push(KeyboardAction(k_left,    is_down));
-      if(!strcmp(s, "l"))          _keyboard_action_channel.push(KeyboardAction(k_right,   is_down));
-      if(!strcmp(s, "k"))          _keyboard_action_channel.push(KeyboardAction(k_up,      is_down));
-      if(!strcmp(s, "j"))          _keyboard_action_channel.push(KeyboardAction(k_down,    is_down));
-      if(!strcmp(s, "a"))          _keyboard_action_channel.push(KeyboardAction(k_brakes,  is_down));
     }
   }
 }
@@ -136,7 +132,9 @@ void Mouser::relative_move(int x, int y) {
 }
 
 void Mouser::button(int n, bool pressed) {
+  std::cout << "button " << n << " " << ((pressed == 1) ? "down" : "up") << std::endl;
   XTestFakeButtonEvent(_d, n, pressed, 0);
+  XFlush(_d);
 }
 
 void Mouser::do_command(Command c) {
