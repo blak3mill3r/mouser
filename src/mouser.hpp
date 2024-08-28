@@ -68,9 +68,9 @@ private:
   float deltax = 0.0f;
   float deltay = 0.0f;
 
-  const float FORCE = 0.8f;
-  const float FRICTION = 0.98f;
-  const float FRICTION_BRAKES = 0.80f;
+  const float FORCE = 2.8f;
+  const float FRICTION = 0.995f;
+  const float FRICTION_BRAKES = 0.60f;
   bool brakes = false;
 
   class command_visitor : public boost::static_visitor<void> {
