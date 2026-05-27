@@ -16,19 +16,51 @@ When you run `mouser`, it grabs the keyboard, until you press `q`.
 
 ## Controls
 
+Default bindings (customizable — see Configuration below):
+
 * `hjkl` Move the mouse (apply a force)
 * `a` Brakes (increase friction)
 * `f` Click button 1
 * `d` Click button 2
 * `s` Click button 3
-* You can also double-click...
 * `q` Ungrab the keyboard
 
-## Is it any good?
+You can also double-click by pressing the button key twice quickly.
 
-Not really. I mean, I am finding it helpful, but this is a one-day hack with lots of rough edges.
+## Configuration
 
-The only way to customize the keybindings is to edit the source and compile it.
+Create a file at `~/.config/mouser/config` (or `$XDG_CONFIG_HOME/mouser/config`).
+
+Example:
+
+```
+left   = h
+right  = l
+up     = k
+down   = j
+brakes = a
+button1 = f
+button2 = d
+button3 = s
+quit   = q
+
+# Optional physics tuning
+force           = 2.8
+friction        = 0.995
+friction_brakes = 0.60
+```
+
+See `config.example` in the repo for a documented template.
+
+You can also point at a specific file on the command line:
+
+```
+mouser -c ~/my-special-bindings
+```
+
+Run `mouser --help` for the full list of options.
+
+A config file lets you completely change the feel and the keys without recompiling.
 
 ## Design
 
@@ -43,15 +75,17 @@ make
 ./mouser
 ```
 
-* and then maybe configure your window manager to run the `mouser` binary when you press some key sequence
+Then (recommended) configure your window manager to launch the `mouser` binary on some key sequence.
+
+`make clean` is also available.
 
 ## Dependencies
 
-* libboost_fiber
-* libboost_context
-* libboost_thread
-* libboost_system
-* libX11
-* libXtst
+* C++17 compiler (clang++ or g++)
+* libboost_fiber + libboost_context (the fiber library is still used for the lightweight concurrent handlers)
+* libboost_thread + libboost_system
+* libX11 + libXtst (XKBlib is used for modern key symbol lookup)
+
+No other runtime dependencies. The old `-Wno-deprecated-declarations` hack is gone.
 
 ![Mouser](https://vignette.wikia.nocookie.net/fantendo/images/7/77/Mouser_-_Toadette_Strikes.png/revision/latest?cb=20150715175143)

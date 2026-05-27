@@ -1,0 +1,39 @@
+# mouser configuration file
+#
+# Location searched (in order):
+#   1. -c /path/to/file   (explicit on command line)
+#   2. $XDG_CONFIG_HOME/mouser/config
+#   3. ~/.config/mouser/config
+#   4. ~/.mouserrc
+#
+# If no file is found, the classic defaults are used (hjkl + a/f/d/s/q).
+
+# ------------------------------------------------------------------
+# Key bindings
+# ------------------------------------------------------------------
+# Format:   action = keysym-name
+# The keysym name is what X reports (e.g. "h", "Return", "space", "F1").
+# Case is ignored for the action name on the left.
+
+left   = h
+right  = l
+up     = k
+down   = j
+
+brakes = a
+
+button1 = f     # left click
+button2 = d     # middle click
+button3 = s     # right click
+
+quit   = q
+
+# ------------------------------------------------------------------
+# Physics (optional)
+# ------------------------------------------------------------------
+# These control the "video game" mouse feel.
+# Omit any line to keep the built-in default.
+
+force           = 2.8
+friction        = 0.995
+friction_brakes = 0.60

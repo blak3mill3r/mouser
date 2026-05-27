@@ -3,12 +3,31 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/XKBlib.h>
 #include <X11/extensions/XTest.h>
+#include <chrono>
 #include <cstring>
 #include <iostream>
+#include <optional>
+#include <unordered_map>
+#include <variant>
+
 #include <boost/fiber/all.hpp>
-#include <boost/variant.hpp>
-#include <boost/chrono.hpp>
+
+#include "config.hpp"
+
+// High-level actions that can be bound to keys
+enum class Action {
+    Left,
+    Right,
+    Up,
+    Down,
+    Brakes,
+    Click1,
+    Click2,
+    Click3,
+    Quit
+};
 
 enum ControlKey {k_up, k_down, k_left, k_right, k_button_1, k_button_2, k_button_3, k_brakes};
 
@@ -26,7 +45,7 @@ struct CmdButton {
   CmdButton(int b, bool p) : button(b), pressed(p) {}
 };
 
-typedef boost::variant< CmdMovement, CmdButton > Command;
+using Command = std::variant<CmdMovement, CmdButton>;
 
 // Channel types
 typedef boost::fibers::unbuffered_channel< XEvent > xevent_channel_t;
@@ -36,7 +55,7 @@ typedef boost::fibers::buffered_channel< Command > xtest_action_channel_t;
 class Mouser
 {
 public:
-  Mouser();
+  explicit Mouser(const Config& cfg = Config{});
   virtual ~Mouser();
   void run();
   //xevent_channel_t channel();
@@ -68,25 +87,25 @@ private:
   float deltax = 0.0f;
   float deltay = 0.0f;
 
-  const float FORCE = 2.8f;
-  const float FRICTION = 0.995f;
-  const float FRICTION_BRAKES = 0.60f;
+  float force = 2.8f;
+  float friction = 0.995f;
+  float friction_brakes = 0.60f;
   bool brakes = false;
 
-  class command_visitor : public boost::static_visitor<void> {
-  protected:
+  // keysym string (e.g. "h") -> Action
+  std::unordered_map<std::string, Action> key_to_action;
+
+  // Modern visitor using std::visit (no longer inherits from boost::static_visitor)
+  struct command_visitor {
     Mouser *m;
-  public:
     explicit command_visitor(Mouser *mover) : m(mover) { }
 
-    void operator()(CmdMovement c) const
-    {
-      m->relative_move(c.first,c.second);
+    void operator()(CmdMovement c) const {
+      m->relative_move(c.first, c.second);
     }
-    
-    void operator()(CmdButton c) const
-    {
-      m->button(c.button,c.pressed);
+
+    void operator()(CmdButton c) const {
+      m->button(c.button, c.pressed);
     }
   };
 };
