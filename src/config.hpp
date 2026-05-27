@@ -9,9 +9,11 @@ struct Config {
     // action name (lowercase canonical) -> keysym name as string (e.g. "h", "k")
     std::unordered_map<std::string, std::string> keys;
 
-    float force = 2.8f;
-    float friction = 0.995f;
-    float friction_brakes = 0.60f;
+    // New smoothed target velocity physics model
+    float max_speed       = 25.0f;  // target speed in pixels per tick with keys held
+    float response        = 0.22f;  // 0-1, how quickly actual velocity approaches desired
+    float brake_max_speed = 5.0f;   // lower target speed in precision/brakes mode
+    float brake_response  = 0.55f;  // higher = snappier response when brakes held
 
     // Returns the keysym string for a canonical action, or nullopt if not bound
     std::optional<std::string> get_key(const std::string& action) const;
