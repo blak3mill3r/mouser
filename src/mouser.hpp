@@ -80,17 +80,23 @@ private:
   int _x_fd;
   bool _running{true};
 
-  float fx = 0.0f;
-  float fy = 0.0f;
   float vx = 0.0f;
   float vy = 0.0f;
   float deltax = 0.0f;
   float deltay = 0.0f;
 
-  float force = 2.8f;
-  float friction = 0.995f;
-  float friction_brakes = 0.60f;
-  bool brakes = false;
+  // New smoothed target velocity model state
+  float max_speed       = 25.0f;
+  float response        = 0.22f;
+  float brake_max_speed = 5.0f;
+  float brake_response  = 0.55f;
+
+  // Current pressed state for directional keys + brakes modifier
+  bool dir_left  = false;
+  bool dir_right = false;
+  bool dir_up    = false;
+  bool dir_down  = false;
+  bool brakes    = false;
 
   // keysym string (e.g. "h") -> Action
   std::unordered_map<std::string, Action> key_to_action;

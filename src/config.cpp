@@ -93,7 +93,16 @@ std::optional<std::string> Config::get_key(const std::string& action) const {
 }
 
 static bool is_physics_key(const std::string& k) {
-    return k == "force" || k == "friction" || k == "friction_brakes";
+    // New model (preferred)
+    if (k == "max_speed" || k == "response" ||
+        k == "brake_max_speed" || k == "brake_response") {
+        return true;
+    }
+    // Old names for compatibility during transition
+    if (k == "force" || k == "friction" || k == "friction_brakes") {
+        return true;
+    }
+    return false;
 }
 
 Config load_config(const std::optional<std::string>& explicit_path) {
@@ -142,9 +151,18 @@ Config load_config(const std::optional<std::string>& explicit_path) {
         if (is_physics_key(key)) {
             try {
                 float val = std::stof(value);
-                if (key == "force") cfg.force = val;
-                else if (key == "friction") cfg.friction = val;
-                else if (key == "friction_brakes") cfg.friction_brakes = val;
+
+                // New smoothed velocity model
+                if (key == "max_speed")       cfg.max_speed = val;
+                else if (key == "response")   cfg.response = val;
+                else if (key == "brake_max_speed") cfg.brake_max_speed = val;
+                else if (key == "brake_response")  cfg.brake_response = val;
+
+                // Old names (map to reasonable equivalents for transition)
+                else if (key == "force")            cfg.max_speed = val * 1.8f;   // rough mapping
+                else if (key == "friction")         cfg.response = 1.0f - val;    // very rough
+                else if (key == "friction_brakes")  cfg.brake_response = 0.4f + (1.0f - val) * 0.5f;
+
             } catch (...) {
                 throw std::runtime_error("Bad numeric value for '" + key + "' on line " + std::to_string(lineno));
             }
@@ -187,6 +205,10 @@ Config load_config(const std::optional<std::string>& explicit_path) {
         // We could log this, but for a grabber tool we keep stdout clean.
         // The caller can print if desired.
     }
+
+    fprintf(stderr, "[mouser] config loaded from: %s (max_speed=%.1f response=%.3f brake_max=%.1f brake_resp=%.3f)\n",
+            chosen_path.empty() ? "<defaults>" : chosen_path.c_str(),
+            cfg.max_speed, cfg.response, cfg.brake_max_speed, cfg.brake_response);
 
     return cfg;
 }

@@ -18,8 +18,8 @@ When you run `mouser`, it grabs the keyboard, until you press `q`.
 
 Default bindings (customizable — see Configuration below):
 
-* `hjkl` Move the mouse (apply a force)
-* `a` Brakes (increase friction)
+* `hjkl` Move the mouse (smoothed target velocity model)
+* `a` Precision / brakes modifier (lower speed + snappier response)
 * `f` Click button 1
 * `d` Click button 2
 * `s` Click button 3
@@ -44,10 +44,11 @@ button2 = d
 button3 = s
 quit   = q
 
-# Optional physics tuning
-force           = 2.8
-friction        = 0.995
-friction_brakes = 0.60
+# Optional physics tuning (new smoothed target velocity model)
+max_speed       = 25.0
+response        = 0.22
+brake_max_speed = 5.0
+brake_response  = 0.55
 ```
 
 See `config.example` in the repo for a documented template.

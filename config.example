@@ -34,6 +34,10 @@ quit   = q
 # These control the "video game" mouse feel.
 # Omit any line to keep the built-in default.
 
-force           = 2.8
-friction        = 0.995
-friction_brakes = 0.60
+# New smoothed target velocity model
+max_speed       = 25.0
+response        = 0.22
+
+# Precision / brakes mode (good for text selection etc.)
+brake_max_speed = 5.0
+brake_response  = 0.55
